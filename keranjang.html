@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowniesNurca - Keranjang</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">BrowniesNurca</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="produk.html">Produk</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="keranjang.html">
+                            <i class="fas fa-shopping-cart"></i> Keranjang
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="kontak.html">Kontak</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Keranjang Section -->
+    <section class="cart py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Keranjang Belanja</h2>
+            <div class="cart-items">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            
+            <div class="cart-summary mt-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ringkasan Pesanan</h5>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Total Item:</span>
+                            <span id="cart-total-items">0</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Total Harga:</span>
+                            <span id="cart-total-price">Rp 0</span>
+                        </div>
+                        <button class="btn btn-primary btn-lg btn-block" onclick="checkout()">Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="text-dark">&copy; 2025 BrowniesNurca. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Cart functionality
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function updateCartDisplay() {
+            const cartItems = document.querySelector('.cart-items');
+            const totalItems = document.getElementById('cart-total-items');
+            const totalPrice = document.getElementById('cart-total-price');
+
+            cartItems.innerHTML = '';
+            let total = 0;
+            let itemCount = 0;
+
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'card mb-3';
+                itemElement.innerHTML = `
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="${item.imageUrl}" class="img-fluid" alt="${item.name}" style="max-height: 100px;">
+                            </div>
+                            <div class="col-md-8">
+                                <h5 class="card-title">${item.name}</h5>
+                                <p class="card-text">Harga: Rp ${item.price.toLocaleString()}</p>
+                                <p class="card-text">Jumlah: ${item.quantity}</p>
+                                <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                cartItems.appendChild(itemElement);
+                
+                total += item.price * item.quantity;
+                itemCount += item.quantity;
+            });
+
+            totalItems.textContent = itemCount;
+            totalPrice.textContent = `Rp ${total.toLocaleString()}`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDisplay();
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Keranjang Anda kosong!');
+                return;
+            }
+            
+            // Here you would typically send the cart data to your server
+            alert('Terima kasih! Pesanan Anda akan segera diproses.');
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartDisplay();
+        }
+
+        // Update cart display when page loads
+        document.addEventListener('DOMContentLoaded', updateCartDisplay);
+    </script>
+</body>
+</html>
